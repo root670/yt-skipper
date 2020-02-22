@@ -1,0 +1,23 @@
+{
+  "name": "yt-skipper",
+  "version": "1.0.0",
+  "description": "Like an ad blocker, but for video content.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently -n backend,frontend \"python3 api.py\" \"cd frontend && npm run serve\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/root670/yt-skipper.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/root670/yt-skipper/issues"
+  },
+  "homepage": "https://github.com/root670/yt-skipper#readme",
+  "dependencies": {
+    "concurrently": "^5.1.0"
+  }
+}

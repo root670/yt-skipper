@@ -24,19 +24,12 @@ class Caption(Resource):
 
         Arguments:
             video_id: YouTube video ID.
-            audio_descriptions: Flag to specify if audio descriptions such as `[Applause]` should be
-            included in the caption list. (optional)
         """
         captions = self.yt_transcript_api.get_transcript(video_id)
 
-        if not audio_descriptions:
-            captions = [
-                caption
-                for caption in captions
-                if not self.is_audio_description(caption['text'])
-            ]
+        words = [{'word':word, 'time':caption['start']} for caption in captions for word in caption['text'].split()]
 
-        return captions
+        return words
 
 def main():
     app = Flask(__name__)

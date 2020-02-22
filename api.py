@@ -24,8 +24,8 @@ class Caption(Resource):
 
         Arguments:
             video_id: YouTube video ID.
-            descriptions: Flag to specify if audio descriptions such as `[Applause]` should be
-            removed from the caption list. (optional)
+            audio_descriptions: Flag to specify if audio descriptions such as `[Applause]` should be
+            included in the caption list. (optional)
         """
         captions = self.yt_transcript_api.get_transcript(video_id)
 

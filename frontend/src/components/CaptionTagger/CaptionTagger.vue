@@ -11,14 +11,12 @@
       <v-btn
         color="primary"
         :loading="loading"
-        :disabled="loading"
+        :disabled="loading || videoUrl.length == 0"
         @click="fetchCaption"
-      >
-        Fetch
-      </v-btn>
+      >Fetch</v-btn>
     </v-col>
   </v-row>
-  <v-container fluid>
+    <v-alert v-if="errorText.length > 0" type="error">{{ errorText }}</v-alert>
     <v-row dense ref="selectable">
       <span
         v-for="(caption, idx) in captions"
@@ -32,7 +30,6 @@
       >{{ caption.word }}</span>
     </v-row>
   </v-container>
-</v-container>
 </template>
 
 <script>
@@ -50,7 +47,8 @@ export default {
         captions: [],
         loading: false,
         DEFAULT_TEXT_LABEL: DEFAULT_TEXT_LABEL,
-        TEXT_LABELS: TEXT_LABELS
+        TEXT_LABELS: TEXT_LABELS,
+        errorText: '',
       }
     },
     computed: {
@@ -81,10 +79,14 @@ export default {
       },
       fetchCaption() {
         if (this.videoId == '')
+        {
+          this.errorText = "Couldn't get video ID from URL.";
           return;
+        }
 
         this.loading = true;
         this.captions = [];
+        this.errorText = '';
 
         axios.get(API_URL + '/' + this.videoId)
           .then((response) => {
@@ -93,7 +95,8 @@ export default {
             }));
           })
           .catch((error) => {
-            console.log(error)
+            console.log(error);
+            this.errorText = error.response.data.error;
           })
           .finally(() => {
             this.loading = false;

@@ -1,4 +1,4 @@
-from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, VideoUnavailable
 from flask import Flask
 from flask_restful import Resource, Api
 from flask_cors import CORS
@@ -25,7 +25,12 @@ class Caption(Resource):
         Arguments:
             video_id: YouTube video ID.
         """
-        captions = self.yt_transcript_api.get_transcript(video_id)
+        try:
+            captions = self.yt_transcript_api.get_transcript(video_id)
+        except TranscriptsDisabled:
+            return dict(error='Transcript is not available for this video.'), 404
+        except VideoUnavailable:
+            return dict(error='Video is unavailable.'), 404
 
         words = [{'word':word, 'time':caption['start']} for caption in captions for word in caption['text'].split()]
 

@@ -17,19 +17,27 @@
     </v-col>
   </v-row>
     <v-alert v-if="errorText.length > 0" type="error">{{ errorText }}</v-alert>
-    <v-row dense ref="selectable">
-      <span
-        v-for="(caption, idx) in captions"
-        :key="idx"
-        :id="idx"
-        class="word lighten-4"
-        :class="{
-          purple: caption.tag == DEFAULT_TEXT_LABEL,
-          green: caption.tag == TEXT_LABELS.SPONSOR_MENTION
-        }"
-      >{{ caption.word }}</span>
-    </v-row>
-  </v-container>
+  <v-row dense ref="selectable">
+    <div
+      v-show="showTools"
+      class="tools"
+      :style="{
+        left: `${toolsX}px`,
+        top: `${toolsY}px`,
+      }"
+      ></div>
+    <span
+      v-for="(caption, idx) in captions"
+      :key="idx"
+      :id="idx"
+      class="word lighten-4"
+      :class="{
+        /*purple: caption.tag == DEFAULT_TEXT_LABEL,*/
+        green: caption.tag == TEXT_LABELS.SPONSOR_MENTION
+      }"
+    >{{ caption.word }}</span>
+  </v-row>
+</v-container>
 </template>
 
 <script>
@@ -49,6 +57,9 @@ export default {
         DEFAULT_TEXT_LABEL: DEFAULT_TEXT_LABEL,
         TEXT_LABELS: TEXT_LABELS,
         errorText: '',
+        showTools: false,
+        toolsX: 0,
+        toolsY: 0
       }
     },
     computed: {
@@ -66,15 +77,24 @@ export default {
     },
     methods: {
       onMouseup() {
-        console.log('Mouse up');
         const selection = window.getSelection();
-        const startNode = selection.getRangeAt(0).startContainer.parentNode;
-        const endNode = selection.getRangeAt(0).endContainer.parentNode;
-        if(startNode.parentNode == this.$refs["selectable"])
-        {
+        const startContainer = selection.getRangeAt(0).startContainer;
+        const endContainer = selection.getRangeAt(0).endContainer;
+        let startNode = (startContainer.nodeType == Node.TEXT_NODE) ? startContainer.parentNode : startContainer;
+        let endNode = (endContainer.nodeType == Node.TEXT_NODE) ? endContainer.parentNode : endContainer;
+        if(startNode.parentNode == this.$refs["selectable"] && endNode.parentNode == this.$refs["selectable"]) {
           console.log('start:' + startNode.id);
           console.log('end:' + endNode.id);
-          selection.removeAllRanges();
+
+          const { x, y, width } = selection.getRangeAt(0).getBoundingClientRect();
+          if(!width) {
+            this.showTools = false;
+            return
+          }
+          this.toolsX = x + (width / 2);
+          this.toolsY = y + window.scrollY - 75;
+          this.showTools = true;
+          // selection.removeAllRanges();
         }
       },
       fetchCaption() {
@@ -108,6 +128,13 @@ export default {
 
 <style scoped>
 .word {
-  margin-right: 1em;
+  padding-left: .5em;
+  padding-right: .5em;
+}
+.tools {
+  position: absolute;
+  background: red;
+  width: 50px;
+  height: 20px;
 }
 </style>

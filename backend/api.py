@@ -32,7 +32,11 @@ class Caption(Resource):
         except VideoUnavailable:
             return dict(error='Video is unavailable.'), 404
 
-        words = [{'word':word, 'time':caption['start']} for caption in captions for word in caption['text'].split()]
+        words = [
+            {'word':word, 'time':caption['start']}
+            for caption in captions
+            for word in caption['text'].split()
+        ]
 
         return words
 

@@ -6,7 +6,6 @@
       dark
     >
       <v-toolbar-title>yt-skipper</v-toolbar-title>
-
       <v-spacer></v-spacer>
     </v-app-bar>
 
